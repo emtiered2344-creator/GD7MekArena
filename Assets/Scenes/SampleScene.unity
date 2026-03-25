@@ -1137,8 +1137,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8de018fcc2e801e47b70a705857eed7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MechTest
-  speed: 3
-  dashSpeed: 5
+  speed: 7
+  dashSpeed: 40
+  dashDuration: 0.25
+  dashCooldown: 3
+  dashCooldownTimer: 0
+  dashCounts: 0
+  maxDashCounts: 3
   gravity: -9.81
   isPlayer2: 0
 --- !u!4 &2027666356
