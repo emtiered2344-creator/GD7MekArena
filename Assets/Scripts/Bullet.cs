@@ -30,7 +30,14 @@ public class Bullet : MonoBehaviour
             }
         }
 
-        transform.position += direction * speed * Time.deltaTime;
+        if(target == null)
+        {
+            transform.position += transform.forward * speed * Time.deltaTime;
+        }
+        else
+        {
+            transform.position += direction * speed * Time.deltaTime;
+        }
     }
 
     public void SetTarget(Transform newTarget, float bulletDamage, float bulletSpeed, float turnSpeed)
