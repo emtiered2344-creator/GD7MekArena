@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,6 +27,9 @@ public abstract class Character : MonoBehaviour, IMovement
     public float bulletSpeed;
     public float bulletTurnSpeed;
     public Transform firePoint;
+    public float magSize;
+    public float fireRate;
+    public float reloadTime;
 
     [SerializeField]Transform target;
     [SerializeField]Transform meshRot;
@@ -34,38 +38,68 @@ public abstract class Character : MonoBehaviour, IMovement
     Vector3 playerVelocity;
     float dashTimer = 0f;
     Vector3 dashDirection = Vector3.zero;
-    bool isDashing = false;
+    public bool isDashing = false;
     Vector3 lastFacingDirection = Vector3.forward;
     [SerializeField] float rotationLerpSpeed = 5f;
+    
+    float fireRateTimer = 0f;
+    float currentMagSize;
+    float currentReloadTime;
 
     void Start()
     {
         controller = this.GetComponent<CharacterController>();
         dashCounts = maxDashCounts;
-
+        bulletTurnSpeed = 7.5f / bulletSpeed;
+        currentMagSize = magSize;
+        currentReloadTime = reloadTime;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isPlayer2)
+        if (!isPlayer2)//player1
         {
             MoveControl(Input.GetAxis("HorizontalPlayer1"), Input.GetAxis("VerticalPlayer1"),Input.GetKeyDown(KeyCode.G));
-            ShootControl(Input.GetKeyDown(KeyCode.F));
+            if(Input.GetKey(KeyCode.F))
+            {
+                if(fireRateTimer >= fireRate && currentMagSize > 0)
+                shootBullet();
+            }
         }
-        else
+        else//player2
         {
             MoveControl(Input.GetAxis("HorizontalPlayer2"), Input.GetAxis("VerticalPlayer2"),Input.GetKeyDown(KeyCode.Keypad2));
-            ShootControl(Input.GetKeyDown(KeyCode.Keypad1));
+            if(Input.GetKey(KeyCode.Keypad1))
+            {
+                if(fireRateTimer >= fireRate && currentMagSize > 0)
+                shootBullet();
+            }
         }
         targetDetection();
         
+        // Update fire rate timer
+        if(fireRateTimer <= fireRate)//firerate boom boom
+        {
+            fireRateTimer += Time.deltaTime;
+        }
+
+        if(currentMagSize <= 0)//reloading weapon
+        {
+            currentReloadTime -= Time.deltaTime;
+            if(currentReloadTime <= 0)
+            {
+                currentMagSize = magSize;
+                currentReloadTime = reloadTime;
+            }
+            
+        }
     }
-    public void Move(Vector3 direction)
+    public void Move(Vector3 direction)//movement method
     {
         controller.Move(direction * speed * Time.deltaTime);
     }
-    public void Dash(Vector3 direction)
+    public void Dash(Vector3 direction)//dash method
     {
         if (!isDashing)
         {
@@ -75,29 +109,43 @@ public abstract class Character : MonoBehaviour, IMovement
         }
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage)//hit method
     {
         health -= damage;
     }
 
-    public void targetDetection(){
-        if(!isPlayer2)
+    public void targetDetection(){//target detection method
+        if(!isPlayer2)//player1
         {
-           Collider[] hit = Physics.OverlapSphere(transform.position,detectionRange,LayerMask.GetMask("Player2"));
+            Collider[] hit = Physics.OverlapSphere(transform.position,detectionRange,LayerMask.GetMask("Player2"));
             if(hit.Length > 0){
-                Debug.Log("Detected 2");
                 target = hit[0].transform;
+
+                Ray ray = new Ray(transform.position, target.position - transform.position);
+                if(Physics.Raycast(ray, out RaycastHit hitInfo, detectionRange, LayerMask.GetMask("Obstacles")))
+                {
+                    Debug.Log("Target Lost");
+                    target = null;
+                }
+
             }
             else
             {
                 target = null;
             }
         }
-        else{
+        else{//player2
            Collider[] hit = Physics.OverlapSphere(transform.position,detectionRange,LayerMask.GetMask("Player1"));
             if(hit.Length > 0){
-                Debug.Log("Detected 1");
                 target = hit[0].transform;
+
+                Ray ray = new Ray(transform.position, target.position - transform.position);
+                if(Physics.Raycast(ray, out RaycastHit hitInfo, detectionRange, LayerMask.GetMask("Obstacles")))
+                {
+                    Debug.Log("Target Lost");
+                    target = null;
+                }
+
             }
             else
             {
@@ -106,22 +154,19 @@ public abstract class Character : MonoBehaviour, IMovement
         }
         
     }
-
-    public void ShootControl(bool shootInp)
+    public void shootBullet()
     {
-        if (shootInp)
-        {
-            GameObject basicbullet = Instantiate(basicBullet, firePoint.position, firePoint.rotation);
-            Bullet bulletScript = basicbullet.GetComponent<Bullet>();
-            if(target != null){
-                bulletScript.SetTarget(target, bulletDamage, bulletSpeed, bulletTurnSpeed);
-            }
-            else{
-                bulletScript.SetTarget(null, bulletDamage, bulletSpeed, bulletTurnSpeed);
-                basicBullet.transform.forward = lastFacingDirection;
-            }
-            
+        GameObject basicbullet = Instantiate(basicBullet, firePoint.position, firePoint.rotation);
+        Bullet bulletScript = basicbullet.GetComponent<Bullet>();
+        if(target != null){
+            bulletScript.SetTarget(target, bulletDamage, bulletSpeed, bulletTurnSpeed);
         }
+        else{
+            bulletScript.SetTarget(null, bulletDamage, bulletSpeed, bulletTurnSpeed);
+            basicBullet.transform.forward = lastFacingDirection;
+        }
+        currentMagSize--;
+        fireRateTimer = 0f;
     }
 
     public void MoveControl(float xInp, float zInp, bool isDashInput)

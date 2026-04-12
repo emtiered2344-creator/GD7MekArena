@@ -54,7 +54,7 @@ public class Bullet : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         Character character = other.GetComponent<Character>();
-        if(character != null)
+        if(character != null && character.isDashing == false)
         {
             character.TakeDamage(damage);
             Destroy(gameObject);

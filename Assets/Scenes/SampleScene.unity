@@ -657,7 +657,7 @@ GameObject:
   - component: {fileID: 878130730}
   - component: {fileID: 878130729}
   - component: {fileID: 878130728}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Floor (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -769,7 +769,7 @@ GameObject:
   - component: {fileID: 929336299}
   - component: {fileID: 929336298}
   - component: {fileID: 929336297}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Floor (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1160,14 +1160,18 @@ MonoBehaviour:
   gravity: -9.81
   health: 0
   maxHealth: 0
-  detectionRange: 5
+  detectionRange: 10
   basicBullet: {fileID: 9144540947625501814, guid: 91c836e98f5770944898ba65bceacba5, type: 3}
   bulletDamage: 5
-  bulletSpeed: 10
-  bulletTurnSpeed: 2
+  bulletSpeed: 25
+  bulletTurnSpeed: 0.5
   firePoint: {fileID: 35481755}
+  magSize: 5
+  fireRate: 1
+  reloadTime: 2
   target: {fileID: 0}
   meshRot: {fileID: 95325806}
+  isDashing: 0
   rotationLerpSpeed: 5
 --- !u!4 &1167000174
 Transform:
@@ -1197,7 +1201,7 @@ GameObject:
   - component: {fileID: 1169094789}
   - component: {fileID: 1169094788}
   - component: {fileID: 1169094787}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Floor (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1309,7 +1313,7 @@ GameObject:
   - component: {fileID: 1234829036}
   - component: {fileID: 1234829035}
   - component: {fileID: 1234829034}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Floor (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1598,14 +1602,18 @@ MonoBehaviour:
   gravity: -9.81
   health: 0
   maxHealth: 0
-  detectionRange: 5
+  detectionRange: 10
   basicBullet: {fileID: 9144540947625501814, guid: 91c836e98f5770944898ba65bceacba5, type: 3}
   bulletDamage: 5
-  bulletSpeed: 10
-  bulletTurnSpeed: 2
+  bulletSpeed: 25
+  bulletTurnSpeed: 0.3
   firePoint: {fileID: 1947902186}
+  magSize: 5
+  fireRate: 1
+  reloadTime: 2
   target: {fileID: 0}
   meshRot: {fileID: 978588299}
+  isDashing: 0
   rotationLerpSpeed: 5
 --- !u!4 &2027666356
 Transform:
