@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,7 +16,7 @@ public abstract class Character : MonoBehaviour, IMovement
     [SerializeField] float gravity = -9.81f;
 
     [Header("Mech Stat")]
-    [SerializeField] float health;
+    [SerializeField] public float health;
     [SerializeField] float maxHealth;
     [SerializeField] float detectionRange;
 
@@ -53,6 +52,18 @@ public abstract class Character : MonoBehaviour, IMovement
         bulletTurnSpeed = 7.5f / bulletSpeed;
         currentMagSize = magSize;
         currentReloadTime = reloadTime;
+        health = maxHealth;
+
+
+        if (!isPlayer2)
+        {
+            GameManager.instance.player1 = this.gameObject;
+        }
+        else
+        {
+            GameManager.instance.player2 = this.gameObject;
+        }
+
     }
 
     // Update is called once per frame
@@ -115,6 +126,7 @@ public abstract class Character : MonoBehaviour, IMovement
     }
 
     public void targetDetection(){//target detection method
+
         if(!isPlayer2)//player1
         {
             Collider[] hit = Physics.OverlapSphere(transform.position,detectionRange,LayerMask.GetMask("Player2"));
@@ -134,6 +146,7 @@ public abstract class Character : MonoBehaviour, IMovement
                 target = null;
             }
         }
+
         else{//player2
            Collider[] hit = Physics.OverlapSphere(transform.position,detectionRange,LayerMask.GetMask("Player1"));
             if(hit.Length > 0){
@@ -154,7 +167,7 @@ public abstract class Character : MonoBehaviour, IMovement
         }
         
     }
-    public void shootBullet()
+    public void shootBullet()//shooting method
     {
         GameObject basicbullet = Instantiate(basicBullet, firePoint.position, firePoint.rotation);
         Bullet bulletScript = basicbullet.GetComponent<Bullet>();

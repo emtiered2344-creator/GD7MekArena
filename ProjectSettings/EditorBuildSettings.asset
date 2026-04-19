@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/UndergroundColli.unity
+    path: Assets/Scenes/UndergroundColosseum.unity
     guid: aa8a771b8b7891443bb760ba0bb2cc3f
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
