@@ -71,39 +71,75 @@ public abstract class Character : MonoBehaviour, IMovement
     {
         if (!isPlayer2)//player1
         {
-            MoveControl(Input.GetAxis("HorizontalPlayer1"), Input.GetAxis("VerticalPlayer1"),Input.GetKeyDown(KeyCode.G));
-            if(Input.GetKey(KeyCode.F))
+            MoveControl(Input.GetAxis("HorizontalPlayer1"), Input.GetAxis("VerticalPlayer1"), Input.GetKeyDown(KeyCode.G));
+            if (Input.GetKey(KeyCode.F))
             {
-                if(fireRateTimer >= fireRate && currentMagSize > 0)
-                shootBullet();
+                if (fireRateTimer >= fireRate && currentMagSize > 0)
+                    shootBullet();
             }
         }
         else//player2
         {
-            MoveControl(Input.GetAxis("HorizontalPlayer2"), Input.GetAxis("VerticalPlayer2"),Input.GetKeyDown(KeyCode.Keypad2));
-            if(Input.GetKey(KeyCode.Keypad1))
+            MoveControl(Input.GetAxis("HorizontalPlayer2"), Input.GetAxis("VerticalPlayer2"), Input.GetKeyDown(KeyCode.Keypad2));
+            if (Input.GetKey(KeyCode.Keypad1))
             {
-                if(fireRateTimer >= fireRate && currentMagSize > 0)
-                shootBullet();
+                if (fireRateTimer >= fireRate && currentMagSize > 0)
+                    shootBullet();
             }
         }
         targetDetection();
-        
+
         // Update fire rate timer
-        if(fireRateTimer <= fireRate)//firerate boom boom
+        if (fireRateTimer <= fireRate)//firerate boom boom
         {
             fireRateTimer += Time.deltaTime;
         }
 
-        if(currentMagSize <= 0)//reloading weapon
+        if (currentMagSize <= 0)//reloading weapon
         {
             currentReloadTime -= Time.deltaTime;
-            if(currentReloadTime <= 0)
+            if (currentReloadTime <= 0)
             {
                 currentMagSize = magSize;
                 currentReloadTime = reloadTime;
             }
-            
+
+        }
+
+        // TEST: Press 'M' for MEATBALL RAIN with timer display
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            if (MeatballManager.Instance != null)
+            {
+                Debug.Log("M KEY PRESSED - STARTING MEATBALL RAIN!");
+                MeatballManager.Instance.StartMeatballRain();
+            }
+        }
+
+        // TEST: Press 'N' to stop rain early
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            if (MeatballManager.Instance != null)
+            {
+                MeatballManager.Instance.StopMeatballRain();
+            }
+        }
+
+        // Display current rain status in console (press 'B')
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            if (MeatballManager.Instance != null)
+            {
+                if (MeatballManager.Instance.IsRaining())
+                {
+                    float remaining = MeatballManager.Instance.GetRemainingTime();
+                    Debug.Log($"Meatball rain ACTIVE - {remaining:F1} seconds remaining");
+                }
+                else
+                {
+                    Debug.Log("No meatball rain active");
+                }
+            }
         }
     }
     public void Move(Vector3 direction)//movement method
@@ -123,6 +159,7 @@ public abstract class Character : MonoBehaviour, IMovement
     public void TakeDamage(float damage)//hit method
     {
         health -= damage;
+        Debug.Log($"CHARACTER DAMAGE TAKEN! New health: {health}/{maxHealth}");
     }
 
     public void targetDetection(){//target detection method
